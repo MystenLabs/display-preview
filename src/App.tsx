@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { DisplayEditor } from "./components/DisplayEditor";
 import { DisplayModal } from "./components/DisplayModal";
-import { DisplayPreview } from "./components/DisplayPreview";
 import { DocsPage } from "./components/DocsPage";
 import { queryDisplay, queryObjectFields, type ObjectFields } from "./sui";
 
@@ -29,9 +28,9 @@ const PRESETS: Preset[] = [
       { key: "description", value: "SuiNS - Sculpt Your Identity" },
       { key: "link", value: "https://{domain_name}.id" },
       { key: "image_url", value: "https://api-mainnet.suins.io/nfts/{domain_name}/{expiration_timestamp_ms}" },
+      { key: "project_url", value: "https://suins.io" },
       { key: "tld", value: "{domain.labels[0u8]}" },
       { key: "domain", value: "{domain.labels[1u8]}" },
-      { key: "project_url", value: "https://suins.io" },
       { key: "subdomain", value: "{subdomain.labels[2u8] | 'No subdomain'}" },
       { key: "expires", value: "{expiration_timestamp_ms:ts}" },
     ],
@@ -47,8 +46,8 @@ const PRESETS: Preset[] = [
       { key: "link", value: "https://suifrens.com/fren/{id:hex}" },
       { key: "project_url", value: "https://suifrens.com" },
       { key: "pattern", value: "{attributes[0u8]}" },
-      { key: "main_color", value: "{attributes[1u8]}" },
-      { key: "secondary_color", value: "{attributes[2u8]}" },
+      { key: "main_color", value: "#{attributes[1u8]}" },
+      { key: "secondary_color", value: "#{attributes[2u8]}" },
       { key: "eyes", value: "{attributes[3u8]}" },
       { key: "genes", value: "{genes:hex}" },
       { key: "head_item", value: "{id=>[0x7aee872d77cade27e7d9b79bf9c67ac40bfb1b797e8b7438ee73f0af21bb4664::accessories::AccessoryKey('head')].name | 'Not equipped'}" },
@@ -167,10 +166,6 @@ function App() {
     }
   }, [objectId, fields]);
 
-  const handleHidePreview = useCallback(() => {
-    setResult(null);
-    setError(null);
-  }, []);
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
@@ -302,22 +297,6 @@ function App() {
               >
                 {loading ? "Loading..." : "Preview"}
               </button>
-              {result && (
-                <button
-                  onClick={() => setShowModal(true)}
-                  className="rounded-lg border border-gray-700 px-5 py-2.5 text-sm font-medium text-gray-300 transition hover:border-gray-500 hover:text-white"
-                >
-                  Show Preview
-                </button>
-              )}
-              {(result || error) && (
-                <button
-                  onClick={handleHidePreview}
-                  className="rounded-lg border border-gray-700 px-5 py-2.5 text-sm font-medium text-gray-300 transition hover:border-gray-500 hover:text-white"
-                >
-                  Clear
-                </button>
-              )}
             </div>
 
             {/* Error */}
@@ -325,11 +304,6 @@ function App() {
               <div className="mt-6 rounded-lg border border-red-800/50 bg-red-950/50 px-4 py-3 text-sm text-red-300">
                 {error}
               </div>
-            )}
-
-            {/* JSON Preview */}
-            {result && (
-              <DisplayPreview objectId={objectId} result={result} />
             )}
 
             {/* Modal Preview */}
