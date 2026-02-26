@@ -56,6 +56,27 @@ const PRESETS: Preset[] = [
     ],
   },
   {
+    name: "Prime Machin",
+    hint: "VecMap attributes access, nested fields, url building",
+    objectId: "0x0825988fc8b6fd6a01b376a81e6b2fcbb6df6887f872913562b16d0fd38f903b",
+    fields: [
+      { key: "name", value: "Machin #{number} ({rarity.data.rank})" },
+      { key: "image_url", value: "https://img.sm.xyz/{id}/" },
+      { key: "description", value: "Prime Machin #{number} manufactured by the Triangle Company." },
+      { key: "clothing", value: "{attributes.data.clothing}" },
+      { key: "background", value: "{attributes.data.background}" },
+      { key: "aura", value: "{attributes.data.aura}" },
+      { key: "mask", value: "{attributes.data.mask}" },
+      { key: "decal", value: "{attributes.data.decal}" },
+      { key: "headwear", value: "{attributes.data.headwear}" },
+      { key: "internals", value: "{attributes.data.internals}" },
+      { key: "skin", value: "{attributes.data.skin}" },
+      { key: "screen", value: "{attributes.data.screen}" },
+      { key: "rarity", value: "Class: {rarity.data.class}; Rank: {rarity.data.rank}; Score: {rarity.data.score}" },
+
+    ]
+  },
+  {
     name: "Empty",
     hint: "Standard Display fields",
     objectId: "",

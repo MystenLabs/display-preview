@@ -119,7 +119,8 @@ export async function queryDisplay(
   activeFields.forEach((field, i) => {
     const value = contents[`f${i}`];
     if (value !== undefined) {
-      result[field.key] = value;
+      result[field.key] =
+        typeof value === "string" ? value : JSON.stringify(value, null, 2);
     }
   });
 
