@@ -13,6 +13,7 @@ export interface DisplayField {
 
 interface Preset {
   name: string;
+  hint?: string;
   objectId: string;
   fields: { key: string; value: string }[];
 }
@@ -20,19 +21,24 @@ interface Preset {
 const PRESETS: Preset[] = [
   {
     name: "SuiNS",
+    hint: "Nested fields, vector access (tld, domain, subdomain), timestamp transformation",
     objectId:
       "0xbe0d9b1297154b5329f26552e14e1203071707a49a88859fb85d4d59e243ba35",
     fields: [
-      { key: "name", value: "{domain_name}" },
-      { key: "image_url", value: "{image_url}" },
+      { key: "name", value: "{domain.labels[2u8] | ''}@{domain.labels[1u8]}" },
+      { key: "description", value: "SuiNS - Sculpt Your Identity" },
+      { key: "link", value: "https://{domain_name}.id" },
+      { key: "image_url", value: "https://api-mainnet.suins.io/nfts/{domain_name}/{expiration_timestamp_ms}" },
       { key: "tld", value: "{domain.labels[0u8]}" },
       { key: "domain", value: "{domain.labels[1u8]}" },
+      { key: "project_url", value: "https://suins.io" },
       { key: "subdomain", value: "{subdomain.labels[2u8] | 'No subdomain'}" },
       { key: "expires", value: "{expiration_timestamp_ms:ts}" },
     ],
   },
   {
     name: "SuiFren",
+    hint: "Dynamic object field access (*_item), vector access, timestamp transformation",
     objectId:
       "0x7859ac2c04f75be763f9e4639eb6dc4a0148e0c147ebbd325b3552ca47b5b2ca",
     fields: [
@@ -52,8 +58,17 @@ const PRESETS: Preset[] = [
   },
   {
     name: "Empty",
+    hint: "Standard Display fields",
     objectId: "",
-    fields: [],
+    fields: [
+      { key: "name", value: "" },
+      { key: "description", value: "" },
+      { key: "link", value: "" },
+      { key: "image_url", value: "" },
+      { key: "thumbnail_url", value: "" },
+      { key: "project_url", value: "" },
+      { key: "creator", value: "" },
+    ],
   },
 ];
 
@@ -192,6 +207,7 @@ function App() {
               {PRESETS.map((preset) => (
                 <button
                   key={preset.name}
+                  title={preset.hint}
                   onClick={() => {
                     setObjectId(preset.objectId);
                     setFields(makeFields(preset.fields));
@@ -208,6 +224,11 @@ function App() {
                 </button>
               ))}
             </div>
+            {PRESETS.find((p) => p.objectId === objectId)?.hint && (
+              <p className="-mt-2 mb-4 text-xs text-gray-600">
+                {PRESETS.find((p) => p.objectId === objectId)!.hint}
+              </p>
+            )}
 
             {/* Object ID */}
             <div className="mb-8">
@@ -225,6 +246,16 @@ function App() {
                 placeholder="0x..."
                 className="w-full rounded-lg border border-gray-800 bg-gray-900 px-4 py-3 font-mono text-sm text-gray-100 placeholder-gray-600 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
+              {objectId.startsWith("0x") && objectId.length >= 66 && (
+                <a
+                  href={`https://suiscan.xyz/mainnet/object/${objectId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1.5 inline-block text-xs text-gray-600 transition hover:text-blue-400"
+                >
+                  View on SuiScan
+                </a>
+              )}
             </div>
 
             {/* Field hints */}
