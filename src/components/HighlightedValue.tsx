@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { JSX } from "react";
+import { TRANSFORMS } from "../transforms";
 
 /**
  * Syntax highlighter for Display V2 template strings.
@@ -27,16 +28,9 @@ const BRACKET_COLORS = [
   "text-orange-400",
 ];
 
-const TRANSFORMS = new Set([
-  "str",
-  "hex",
-  "base64",
-  "bcs",
-  "json",
-  "timestamp",
-  "ts",
-  "url",
-]);
+const TRANSFORM_NAMES = new Set(TRANSFORMS.map((t) => t.name));
+// "timestamp" is a valid long-form alias not in the autocomplete list
+TRANSFORM_NAMES.add("timestamp");
 
 const KEYWORDS = new Set(["true", "false", "vector"]);
 
@@ -269,7 +263,7 @@ export function HighlightedValue({ value }: { value: string }) {
       const word = value.slice(start, i);
 
       // Transform keyword (after colon)
-      if (afterColon && TRANSFORMS.has(word)) {
+      if (afterColon && TRANSFORM_NAMES.has(word)) {
         parts.push(
           <span key={`xf-${start}`} className="text-teal-400">
             {word}
