@@ -66,7 +66,11 @@ export async function queryObjectFields(
     throw new Error(errors.map((e) => e.message).join("\n"));
   }
 
-  const contents = (data as any)?.object?.asMoveObject?.contents;
+  const contents = (
+    data as {
+      object?: { asMoveObject?: { contents?: { json?: Record<string, unknown>; type?: { repr?: string } } } };
+    }
+  )?.object?.asMoveObject?.contents;
   if (!contents) {
     throw new Error("Object not found or is not a Move object");
   }
@@ -113,7 +117,11 @@ export async function queryDisplay(
     throw new Error(errors.map((e) => e.message).join("\n"));
   }
 
-  const contents = (data as any)?.object?.asMoveObject?.contents;
+  const contents = (
+    data as {
+      object?: { asMoveObject?: { contents?: Record<string, unknown> } };
+    }
+  )?.object?.asMoveObject?.contents;
   if (!contents) {
     throw new Error("Object not found or is not a Move object");
   }

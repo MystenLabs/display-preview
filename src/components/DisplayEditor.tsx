@@ -4,11 +4,8 @@
 import { useCallback, useRef, useState } from "react";
 import type { DisplayField } from "../App";
 import { HighlightedValue } from "./HighlightedValue";
-import {
-  TransformHints,
-  TRANSFORMS,
-  detectTransformTrigger,
-} from "./TransformHints";
+import { TRANSFORMS, detectTransformTrigger } from "../transforms";
+import { TransformHints } from "./TransformHints";
 
 interface Props {
   fields: DisplayField[];

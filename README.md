@@ -1,73 +1,48 @@
-# React + TypeScript + Vite
+# Sui Display Preview
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web-based editor for building and previewing [Display V2](https://docs.sui.io/standards/display) templates for on-chain Sui objects.
 
-Currently, two official plugins are available:
+**Live app:** https://mystenlabs.github.io/display-preview/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## What is Display?
 
-## React Compiler
+Sui Display is a standard for defining how on-chain objects appear in wallets, explorers, and applications. A Display template maps human-readable keys (`name`, `image_url`, `description`, etc.) to format strings that reference an object's Move fields.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+For example, a SuiNS name might use:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+name  ->  {domain.labels[2u8] | ''}@{domain.labels[1u8]}
+expires -> {expiration_timestamp_ms:ts}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This tool lets you write those templates interactively and preview the resolved output against real mainnet objects.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Features
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Template editor** with syntax highlighting for Display V2 expressions (field access, vector indexing, transforms, alternates, dynamic fields)
+- **Live preview** against Sui mainnet via GraphQL - paste any object ID and hit Preview
+- **Rich render + JSON view** in a modal, switchable with Tab
+- **Transform autocomplete** - type `:` inside `{...}` to get suggestions for `:hex`, `:ts`, `:json`, etc.
+- **Object field hints** - automatically fetches the object's type and fields so you can click to add them
+- **Presets** for SuiNS and SuiFren objects demonstrating nested fields, vector access, dynamic object fields, and timestamp transforms
+- **Drag-and-drop** row reordering
+- **Built-in docs** page with the full Display V2 syntax reference
+
+## Development
+
+```bash
+pnpm install
+pnpm dev
 ```
+
+## Build
+
+```bash
+pnpm build
+```
+
+Output goes to `dist/`.
+
+## License
+
+Apache-2.0

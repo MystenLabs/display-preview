@@ -321,7 +321,7 @@ export function HighlightedValue({ value }: { value: string }) {
     const start = i;
     while (
       i < value.length &&
-      !/[a-zA-Z_0-9{}"'()\[\]|:@]/.test(value[i]) &&
+      !/[a-zA-Z_0-9{}"'()[\]|:@]/.test(value[i]) &&
       !(value[i] === "-" && i + 1 < value.length && value[i + 1] === ">") &&
       !(value[i] === "=" && i + 1 < value.length && value[i + 1] === ">")
     ) {
