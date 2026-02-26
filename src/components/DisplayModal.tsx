@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import { useEffect, useState } from "react";
 
 const STANDARD_FIELDS = new Set(["name", "description", "image_url", "project_url", "link", "creator"]);

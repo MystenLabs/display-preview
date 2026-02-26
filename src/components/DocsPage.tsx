@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import { type ReactNode, useEffect } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";

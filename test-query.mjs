@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 // Simple test script to verify the GraphQL query against mainnet
 // Run: node test-query.mjs
 

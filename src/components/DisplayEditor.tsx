@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import { useCallback, useRef, useState } from "react";
 import type { DisplayField } from "../App";
 import { HighlightedValue } from "./HighlightedValue";

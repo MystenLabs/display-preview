@@ -1,3 +1,6 @@
+// Copyright (c) Mysten Labs, Inc.
+// SPDX-License-Identifier: Apache-2.0
+
 import { useState, useCallback, useEffect } from "react";
 import { DisplayEditor } from "./components/DisplayEditor";
 import { DisplayModal } from "./components/DisplayModal";
