@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import { DisplayEditor } from "./components/DisplayEditor";
 import { DisplayModal } from "./components/DisplayModal";
 import { DocsPage } from "./components/DocsPage";
-import { queryDisplay, queryObjectFields, type ObjectFields } from "./sui";
+import { queryDisplay, queryObjectFields, type ObjectFields, type Network } from "./sui";
 
 export interface DisplayField {
   id: string;
@@ -17,6 +17,7 @@ interface Preset {
   name: string;
   hint?: string;
   objectId: string;
+  network: Network;
   fields: { key: string; value: string }[];
 }
 
@@ -24,6 +25,7 @@ const PRESETS: Preset[] = [
   {
     name: "SuiNS",
     hint: "Nested fields, vector access (tld, domain, subdomain), timestamp transformation",
+    network: "mainnet",
     objectId:
       "0xbe0d9b1297154b5329f26552e14e1203071707a49a88859fb85d4d59e243ba35",
     fields: [
@@ -41,6 +43,7 @@ const PRESETS: Preset[] = [
   {
     name: "SuiFren",
     hint: "Dynamic object field access (*_item), vector access, timestamp transformation",
+    network: "mainnet",
     objectId:
       "0x7859ac2c04f75be763f9e4639eb6dc4a0148e0c147ebbd325b3552ca47b5b2ca",
     fields: [
@@ -61,6 +64,7 @@ const PRESETS: Preset[] = [
   {
     name: "Prime Machin",
     hint: "VecMap attributes access, nested fields, url building",
+    network: "mainnet",
     objectId: "0x0825988fc8b6fd6a01b376a81e6b2fcbb6df6887f872913562b16d0fd38f903b",
     fields: [
       { key: "name", value: "Machin #{number} ({rarity.data.rank})" },
@@ -82,6 +86,7 @@ const PRESETS: Preset[] = [
   {
     name: "Empty",
     hint: "Standard Display fields",
+    network: "mainnet",
     objectId: "",
     fields: [
       { key: "name", value: "" },
@@ -108,6 +113,7 @@ function pageFromHash(): "editor" | "docs" {
 
 function App() {
   const [page, setPage] = useState<"editor" | "docs">(pageFromHash);
+  const [network, setNetwork] = useState<Network>("mainnet");
   const [objectId, setObjectId] = useState(PRESETS[0].objectId);
   const [fields, setFields] = useState<DisplayField[]>(
     () => makeFields(PRESETS[0].fields),
@@ -134,7 +140,7 @@ function App() {
 
     setFieldsLoading(true);
     const timer = setTimeout(() => {
-      queryObjectFields(objectId)
+      queryObjectFields(objectId, network)
         .then(setObjectFields)
         .catch(() => setObjectFields(null))
         .finally(() => setFieldsLoading(false));
@@ -144,7 +150,7 @@ function App() {
       clearTimeout(timer);
       setFieldsLoading(false);
     };
-  }, [objectId]);
+  }, [objectId, network]);
 
   const addField = useCallback((): string => {
     const id = crypto.randomUUID();
@@ -180,7 +186,7 @@ function App() {
     setLoading(true);
 
     try {
-      const data = await queryDisplay(objectId, fields);
+      const data = await queryDisplay(objectId, fields, network);
       setResult(data);
       setShowModal(true);
     } catch (err) {
@@ -188,7 +194,7 @@ function App() {
     } finally {
       setLoading(false);
     }
-  }, [objectId, fields]);
+  }, [objectId, fields, network]);
 
 
   return (
@@ -204,14 +210,37 @@ function App() {
               Build and preview Display templates for on-chain objects
             </p>
           </div>
-          <button
-            onClick={() => {
-              window.location.hash = page === "editor" ? "#docs" : "#editor";
-            }}
-            className="rounded-lg border border-gray-700 px-4 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-500 hover:text-white"
-          >
-            {page === "editor" ? "Docs" : "Editor"}
-          </button>
+          <div className="flex items-center gap-3">
+            {/* Network Switch */}
+            <div className="flex rounded-lg border border-gray-700 overflow-hidden">
+              {(["mainnet", "testnet"] as const).map((net) => (
+                <button
+                  key={net}
+                  onClick={() => {
+                    setNetwork(net);
+                    setObjectFields(null);
+                    setResult(null);
+                    setError(null);
+                  }}
+                  className={`px-3 py-2 text-xs font-medium transition ${
+                    network === net
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-900 text-gray-400 hover:text-gray-200"
+                  }`}
+                >
+                  {net}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => {
+                window.location.hash = page === "editor" ? "#docs" : "#editor";
+              }}
+              className="rounded-lg border border-gray-700 px-4 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-500 hover:text-white"
+            >
+              {page === "editor" ? "Docs" : "Editor"}
+            </button>
+          </div>
         </div>
 
         {page === "docs" ? (
@@ -228,6 +257,7 @@ function App() {
                   key={preset.name}
                   title={preset.hint}
                   onClick={() => {
+                    setNetwork(preset.network);
                     setObjectId(preset.objectId);
                     setFields(makeFields(preset.fields));
                     setObjectFields(null);
@@ -267,7 +297,7 @@ function App() {
               />
               {objectId.startsWith("0x") && objectId.length >= 66 && (
                 <a
-                  href={`https://suiscan.xyz/mainnet/object/${objectId}`}
+                  href={`https://suiscan.xyz/${network}/object/${objectId}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-1.5 inline-block text-xs text-gray-600 transition hover:text-blue-400"

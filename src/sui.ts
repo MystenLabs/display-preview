@@ -3,6 +3,8 @@
 
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 
+export type Network = "mainnet" | "testnet";
+
 const MAX_FIELDS = 20;
 
 const OBJECT_FIELDS_QUERY = `
@@ -20,10 +22,16 @@ const OBJECT_FIELDS_QUERY = `
   }
 `;
 
-const client = new SuiGraphQLClient({
-  url: "https://graphql.mainnet.sui.io/graphql",
-  network: "mainnet",
-});
+const clients: Record<Network, SuiGraphQLClient> = {
+  mainnet: new SuiGraphQLClient({
+    url: "https://graphql.mainnet.sui.io/graphql",
+    network: "mainnet",
+  }),
+  testnet: new SuiGraphQLClient({
+    url: "https://graphql.testnet.sui.io/graphql",
+    network: "testnet",
+  }),
+};
 
 function buildQuery(): string {
   const vars: string[] = ["$object: SuiAddress!"];
@@ -56,8 +64,9 @@ export interface ObjectFields {
 
 export async function queryObjectFields(
   objectId: string,
+  network: Network = "mainnet",
 ): Promise<ObjectFields> {
-  const { data, errors } = await client.query({
+  const { data, errors } = await clients[network].query({
     query: OBJECT_FIELDS_QUERY,
     variables: { object: objectId },
   });
@@ -89,6 +98,7 @@ export interface DisplayFieldInput {
 export async function queryDisplay(
   objectId: string,
   fields: DisplayFieldInput[],
+  network: Network = "mainnet",
 ): Promise<Record<string, string>> {
   const activeFields = fields.filter((f) => f.key && f.value);
 
@@ -108,7 +118,7 @@ export async function queryDisplay(
     variables[`i${i}`] = !!field;
   }
 
-  const { data, errors } = await client.query({
+  const { data, errors } = await clients[network].query({
     query: TRY_FORMAT_QUERY,
     variables,
   });
